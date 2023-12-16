@@ -378,6 +378,11 @@ iptables -A INPUT -p tcp --dport 22 -m iprange --src-range 10.41.4.2-10.41.7.254
 iptables -A INPUT -p tcp --dport 22 -j DROP
 ```
 ### Output
+Mengakses web server dari GrobeForest. </br>
+<img width="600" alt="image" src="https://github.com/farah-dhiaf/Jarkom-Modul-5-E09-2023/assets/91003215/8e5d6694-ffe2-44dc-b906-7569b85c456b"></br>
+Mengakses web server selain dari GrobeForest. </br>
+<img width="600" alt="image" src="https://github.com/farah-dhiaf/Jarkom-Modul-5-E09-2023/assets/91003215/3d76e85c-d872-49c2-8667-0579d56713c6">
+
 ## Soal 5
 >Selain itu, akses menuju WebServer hanya diperbolehkan saat jam kerja yaitu Senin-Jumat pada pukul 08.00-16.00.
 ### Jawaban
@@ -388,6 +393,12 @@ iptables -A INPUT -m time --weekdays Mon,Tue,Wed,Thu,Fri --timestart 00:00 --tim
 iptables -A INPUT -m time --weekdays Mon,Tue,Wed,Thu,Fri --timestart 16:00 --timestop 23:59 -j DROP
 ```
 ### Output
+Melakukan ping ke web server di hari Sabtu. </br>
+<img width="600" alt="image" src="https://github.com/farah-dhiaf/Jarkom-Modul-5-E09-2023/assets/91003215/921a6ac9-c536-4044-913d-ac0b3681bf9f"></br>
+Melakukan ping ke web server di hari Rabu jam 11.00. </br>
+<img width="600" alt="image" src="https://github.com/farah-dhiaf/Jarkom-Modul-5-E09-2023/assets/91003215/2271de27-833a-4f47-a3cc-9606130b691e">
+
+
 ## Soal 6
 >Lalu, karena ternyata terdapat beberapa waktu di mana network administrator dari WebServer tidak bisa stand by, sehingga perlu ditambahkan rule bahwa akses pada hari Senin - Kamis pada jam 12.00 - 13.00 dilarang (istirahat maksi cuy) dan akses di hari Jumat pada jam 11.00 - 13.00 juga dilarang (maklum, Jumatan rek).
 ### Jawaban
@@ -397,6 +408,13 @@ iptables -A INPUT -m time --weekdays Mon,Tue,Wed,Thu --timestart 12:00 --timesto
 iptables -A INPUT -m time --weekdays Fri --timestart 11:00 --timestop 13:00 -j DROP
 ```
 ### Output
+Melakukan ping ke web server saat jam kerja. </br>
+<img width="600" alt="image" src="https://github.com/farah-dhiaf/Jarkom-Modul-5-E09-2023/assets/91003215/5bb7691d-f8c5-466c-899c-b67ef9ad3aff"></br>
+Melakukan ping ke web server saat lunch break. </br>
+<img width="600" alt="image" src="https://github.com/farah-dhiaf/Jarkom-Modul-5-E09-2023/assets/91003215/18726f00-fcaa-446c-9dc4-f0ebf8af7f6e"></br>
+Melakukan ping ke web server saat jumatan. </br>
+<img width="600" alt="image" src="https://github.com/farah-dhiaf/Jarkom-Modul-5-E09-2023/assets/91003215/f7bf0a4b-5629-4097-bee1-c6f38c5a3dcf">
+
 ## Soal 7
 >Karena terdapat 2 WebServer, kalian diminta agar setiap client yang mengakses Sein dengan Port 80 akan didistribusikan secara bergantian pada Sein dan Stark secara berurutan dan request dari client yang mengakses Stark dengan port 443 akan didistribusikan secara bergantian pada Sein dan Stark secara berurutan.
 ### Jawaban
