@@ -434,6 +434,8 @@ Setting IPTABLES di node web server untuk filtering terhadap paket yang masuk di
 iptables -A INPUT -p tcp --dport 80 -s 10.41.1.124/30 -m time --datestart 2023-12-16 --datestop 2024-03-20 -j DROP
 ```
 ### Output
+<img width="600" alt="image" src="https://github.com/farah-dhiaf/Jarkom-Modul-5-E09-2023/assets/91003215/79aff250-f6fb-4922-833c-6f648c4b4335">
+
 ## Soal 9
 >Sadar akan adanya potensial saling serang antar kubu politik, maka WebServer harus dapat secara otomatis memblokir alamat IP yang melakukan scanning port dalam jumlah banyak (maksimal 20 scan port) di dalam selang waktu 10 menit. 
 (clue: test dengan nmap)
@@ -466,5 +468,6 @@ service rsyslog restart
 ```
 ### Output
 Melakukan testing dengan `IPTABLES -L` untuk melihat logging.
+<img width="600" alt="image" src="https://github.com/farah-dhiaf/Jarkom-Modul-5-E09-2023/assets/91003215/132b6df2-93e0-4475-8930-afbda5694b6e">
 
 
