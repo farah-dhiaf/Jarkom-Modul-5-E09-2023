@@ -289,32 +289,7 @@ OPTIONS=""
 service isc-dhcp-relay restart
 ```
 Jangan lupa untuk uncomment `net.ipv4.ip_forward=1` pada `/etc/sysctl.conf`</br>
-
-Setting Sein dan Stark menjadi web server.
-```
-apt-get update && apt-get install apache2 -y && apt-get install netcat -y
-
-cp /var/www/html/index.html
-echo '
-Listen 80
-Listen 443
-
-<IfModule ssl_module>
-        Listen 443
-</IfModule>
-
-<IfModule mod_gnutls.c>
-        Listen 443
-</IfModule>' > /etc/apache2/ports.conf
-
-service apache2 start
-
-echo "
-$HOSTNAME
-" > /var/www/html/index.html
-```
 Setelah itu semua node perlu menginstall netcat untuk keperluan testing dengan command `apt-get install netcat -y`</br>
-
 Berikut adalah IP client yang telah diberikan DHCP.</br>
 <img width="600" alt="turkregion" src="https://github.com/farah-dhiaf/Jarkom-Modul-5-E09-2023/assets/91003215/b2a21ec3-1202-4fc1-8700-b7290352045a"></br>
 <img width="600" alt="grobeforest" src="https://github.com/farah-dhiaf/Jarkom-Modul-5-E09-2023/assets/91003215/97cbf281-c596-4ffa-8d61-a2b857e5ac2f"></br>
@@ -418,12 +393,61 @@ Melakukan ping ke web server saat jumatan. </br>
 ## Soal 7
 >Karena terdapat 2 WebServer, kalian diminta agar setiap client yang mengakses Sein dengan Port 80 akan didistribusikan secara bergantian pada Sein dan Stark secara berurutan dan request dari client yang mengakses Stark dengan port 443 akan didistribusikan secara bergantian pada Sein dan Stark secara berurutan.
 ### Jawaban
-Karena tidak ada keterangan setting IPTABLES di node mana, saya memilih node Himmel untuk setting IPTABLES. Untuk setting queue ini diperlukan tambahan konfifurasi dengan menggunakan PREROUTING. Saya mengatur akses yang menuju destinasi port 80 yang mana akses 2 paket pertama didahulukan untuk menuju ke Sein, lalu kemudian 2 paket ke Stark, dan selanjutnya bergantian. Begitu juga untuk port 443 yang akses 2 paket pertama didahulukan menuju Stark, kemudian 2 paket ke Sein, dan selanjutnya bergantian.
+Sebelumnya kita perlu mengatur web server terlebih dahulu. Pertama, install packages yang dibutuhkan.
+```
+apt-get update && apt-get install apt-get install apache2 -y
+```
+Konfigurasi untuk masing-masing web server.
+```
+echo '
+<VirtualHost *:80>
+    ServerName [ip node sein/stark]
+    DocumentRoot /var/www/html
+    ErrorLog \${APACHE_LOG_DIR}/error.log
+    CustomLog \${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+<VirtualHost *:443>
+    ServerName [ip node sein/stark]
+    DocumentRoot /var/www/html
+    ErrorLog \${APACHE_LOG_DIR}/error.log
+    CustomLog \${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+' > /etc/apache2/sites-available/[ip node sein/stark].conf
+```
+Agar bisa mengetahui kita berada di node mana, perlu adanya pesan yang dikirimkan dari node tersebut, saya mengaturnya di `index.html`
+```
+echo '
+$HOSTNAME
+' > /var/www/html/index.html
+```
+Setelah itu kita perlu atur ports yang dipakai.
+```
+echo '
+Listen 80
+Listen 443
+
+<IfModule ssl_module>
+        Listen 443
+</IfModule>
+
+<IfModule mod_gnutls.c>
+        Listen 443
+</IfModule>
+' > /etc/apache2/ports.conf
+```
+Jangan lupa untuk build website yang telah dikonfigurasi sebelumnya dan start apache2.
+```
+a2ensite [ip node sein/stark].conf
+service apache2 stark
+```
+Setelah itu kita atur filteringnya. Karena tidak ada keterangan setting IPTABLES di node mana, saya memilih node Himmel untuk setting IPTABLES. Untuk setting queue ini diperlukan tambahan konfifurasi dengan menggunakan PREROUTING. Saya mengatur akses yang menuju destinasi port 80 yang mana akses 2 paket pertama didahulukan untuk menuju ke Sein, lalu kemudian 2 paket ke Stark, dan selanjutnya bergantian. Begitu juga untuk port 443 yang akses 2 paket pertama didahulukan menuju Stark, kemudian 2 paket ke Sein, dan selanjutnya bergantian.
 ```
 ## untuk sein
-iptables -A PREROUTING -t nat -p tcp --dport 80 -d 10.41.1.114 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 10.41.4.2:80
+iptables -A PREROUTING -t nat -p tcp --dport 80 -d 10.41.4.2 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 10.41.4.2:80
+iptables -A PREROUTING -t nat -p tcp --dport 80 -d 10.41.4.2 -j DNAT --to-destination 10.41.1.114:80
 ## untuk stark
-iptables -A PREROUTING -t nat -p tcp --dport 443 -d 10.41.4.2 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 10.41.1.114:443
+iptables -A PREROUTING -t nat -p tcp --dport 443 -d 10.41.1.114 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 10.41.1.114:443
+iptables -A PREROUTING -t nat -p tcp --dport 443 -d 10.41.1.114 -j DNAT --to-destination 10.41.4.2:443
 ```
 ### Output
 Melakukan testing dengan `curl [IP Sein]:80` dan `curl [ip stark]:443`
