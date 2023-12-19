@@ -426,8 +426,9 @@ iptables -A PREROUTING -t nat -p tcp --dport 80 -d 10.41.1.114 -m statistic --mo
 iptables -A PREROUTING -t nat -p tcp --dport 443 -d 10.41.4.2 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 10.41.1.114:443
 ```
 ### Output
-Melakukan testing dengan `curl [IP Sein]:80`
-<img width="600" alt="image" src="https://github.com/farah-dhiaf/Jarkom-Modul-5-E09-2023/assets/91003215/24335f38-3b95-43d3-a5b2-07625397c4c4">
+Melakukan testing dengan `curl [IP Sein]:80` dan `curl [ip stark]:443`
+<img width="600" alt="image" src="https://github.com/farah-dhiaf/Jarkom-Modul-5-E09-2023/assets/91003215/35bce46d-97bc-4c17-a090-ec3678ac8af0">
+
 
 ## Soal 8
 >Karena berbeda koalisi politik, maka subnet dengan masyarakat yang berada pada Revolte dilarang keras mengakses WebServer hingga masa pencoblosan pemilu kepala suku 2024 berakhir. Masa pemilu (hingga pemungutan dan penghitungan suara selesai) kepala suku bersamaan dengan masa pemilu Presiden dan Wakil Presiden Indonesia 2024.
